@@ -91,6 +91,22 @@ client.addListener("message", async function(from, to, message){
         client.say(to, stringToSay.replace(/\n/g, ' '));
     }
 
+    if (text.startsWith("#+eval")) {
+
+        if (!g.admin.includes(from)) return
+        try {
+            const code = args.join(" ");
+            var evaled = eval(code);
+            const result = eval()
+            if (typeof evaled !== "string") {
+                evaled = require("util").inspect(evaled);
+                bot.say(to, text.replace("+eval", "Input: ") + " Output: " + evaled);
+            }
+        } catch (err) {
+            bot.say(to, text.replace("+eval", "Input: ") + " Output: " + evaled);
+        }
+
+    }
         return;
     }
 } catch(err) {
