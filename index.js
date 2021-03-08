@@ -94,7 +94,7 @@ client.addListener("message", async function(from, to, message){
     }
     if (message.startsWith("#+eval")) {
 
-        if (!g.admin.includes(from)) return
+        if (!from == "SlimeDiamond") return;
         try {
             const code = args.join(" ");
             var evaled = eval(code);
