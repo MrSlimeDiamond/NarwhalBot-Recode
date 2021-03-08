@@ -90,7 +90,8 @@ client.addListener("message", async function(from, to, message){
         var stringToSay = correctname+"first logged into minecraftonline.com on " + time1.toGMTString() + ` (${Math.floor(Difference_In_Days)} days ago) (result from cache)`
         client.say(to, stringToSay.replace(/\n/g, ' '));
     }
-
+        return;
+    }
     if (message.startsWith("#+eval")) {
 
         if (!g.admin.includes(from)) return
@@ -106,8 +107,6 @@ client.addListener("message", async function(from, to, message){
             client.say(to, message.replace("+eval", "Input: ") + " Output: " + evaled);
         }
 
-    }
-        return;
     }
 } catch(err) {
     console.error(err);
