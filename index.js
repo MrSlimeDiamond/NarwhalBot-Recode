@@ -91,7 +91,7 @@ client.addListener("message", async function(from, to, message){
         client.say(to, stringToSay.replace(/\n/g, ' '));
     }
 
-    if (text.startsWith("#+eval")) {
+    if (message.startsWith("#+eval")) {
 
         if (!g.admin.includes(from)) return
         try {
@@ -100,10 +100,10 @@ client.addListener("message", async function(from, to, message){
             const result = eval()
             if (typeof evaled !== "string") {
                 evaled = require("util").inspect(evaled);
-                bot.say(to, text.replace("+eval", "Input: ") + " Output: " + evaled);
+                client.say(to, message.replace("+eval", "Input: ") + " Output: " + evaled);
             }
         } catch (err) {
-            bot.say(to, text.replace("+eval", "Input: ") + " Output: " + evaled);
+            client.say(to, message.replace("+eval", "Input: ") + " Output: " + evaled);
         }
 
     }
