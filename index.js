@@ -1,15 +1,11 @@
 const irc = require("irc");
 const NodeCache = require("node-cache");
 const firstseen_cache = new NodeCache();
-const err_cache = new NodeCache();
 const request = require("request");
 const cheerio = require("cheerio");
-const util = require("util");
-const { testElement } = require("domutils");
 const client = new irc.Client('irc.esper.net', "NarwhalBot-recode", {
     channels: ["#narwhalbot"]
 });
-var ohai = 0;
 
 async function getMcoAPI(script, argument) { // Made by IconPippi
     let output;
@@ -28,60 +24,26 @@ async function getMcoAPI(script, argument) { // Made by IconPippi
 }
 
 
-client.addListener("message", async function(from, to, text, message){
+client.addListener("message", async function(from, to, message){
 
-    const args = text.split(" ");
+    const args = message.split(" ");
     try {
-    if(text.startsWith("+ping")){
+    if(message.startsWith("+ping")){
         client.say(to, from+": Pong!");
     }
-    if(text.startsWith("+err")){
-       let latesterror = err_cache.get("latest");
-       if(latesterror !== undefined){
-        output = latesterror.toString().split("\n")
-           client.say(to, latesterror);
-           return;
-       }else{
-           client.say(to, "No errors in cache for this session");
-           return;
-       }
-    }
-    if(text.startsWith("!tl") || text.startsWith("!!timeplayed")){
+
+    if(message.startsWith("!tl") || message.startsWith("!!timeplayed")){
         correctname = await getMcoAPI("getcorrectname", args[1]);
         hourslogged1 = await getMcoAPI("gettimeonline", correctname);
         hourslogged = Math.floor(hourslogged1 / 3600);
         client.say(to, args[1] + " has logged " + hourslogged + " hours on minecraftonline.com");
         return;
     }
-    if(text.startsWith("!ls") || text.startsWith("!!lastseen")){
-        correctname = await getMcoAPI("getcorrectname", args[1]);
-        var time = await getMcoAPI("getlastseen_unix", correctname);
-        console.log(time.toString());
-        if(time.replace(/\n/g, '') == "INVALID" || time.replace(/\n/g, '') == "NOTFOUND"){
-            client.say(to, "Unknown username.")
-            return;
-        } else if(time.replace(/\n/g, '') == "UNKNOWN"){
-            client.say(to, "User's last seen date is unknown");
-            return;
-        }
 
-        epochnum = parseInt(time);
-        time1 = new Date(epochnum * 1000);
-        timenow = new Date();
-
-        var Difference_In_Time = timenow.getTime() - time1.getTime();
-   
-        var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24); 
-
-        ago = time1.toGMTString()
-        var stringToSay = correctname+"last logged into minecraftonline.com on " + time1.toGMTString() + ` (${Math.floor(Difference_In_Days)} days ago)`
-        client.say(to, stringToSay.replace(/\n/g, ' '));
-        return;
-    }
-    if(text.startsWith("!fs") || text.startsWith("!!firstseen")){
+    if(message.startsWith("!fs") || message.startsWith("!!firstseen")){
         correctname = await getMcoAPI("getcorrectname", args[1]);
         fsc = firstseen_cache.get(correctname)
-        // console.log("CN: "+correctname);
+        console.log("CN: "+correctname);
         console.log(args[1])
         console.log(fsc);
 
@@ -128,45 +90,12 @@ client.addListener("message", async function(from, to, text, message){
         var stringToSay = correctname+"first logged into minecraftonline.com on " + time1.toGMTString() + ` (${Math.floor(Difference_In_Days)} days ago) (result from cache)`
         client.say(to, stringToSay.replace(/\n/g, ' '));
     }
+
         return;
-    }
-    if(text.toLowerCase().includes("ohai")){
-        ohai++;
-    }
-    if(text == "!ohai"){
-        client.say(to, "Ohai has been said "+ohai+" times")
-    }
-    if (text.startsWith("#+eval")) {
-
-        if (!from == "SlimeDiamond") return;
-        try {
-            a = args.slice(1);
-            const code = a.join(" ");
-            // console.log(a);
-            // console.log(code);
-            var evaled = eval(code);
-            const result = eval()
-            if (typeof evaled !== "string") {
-                evaled = require("util").inspect(evaled);
-                client.say(to, "Input: "+code);
-                client.say("Output: "+evaled);
-                return;
-            }
-        } catch (err) {
-            client.say(to, "Input: "+a);
-            client.say("Output(Error): "+evaled);
-            return;
-        }
-
-    }
-
-    if(text == "+giberror"){
-        ok
     }
 } catch(err) {
     console.error(err);
     client.say(to, "An error occured! (Request may have timed out) Maybe try again?");
-    err_cache.set("latest", err.toString());
     return;
 }
 });
