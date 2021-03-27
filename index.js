@@ -45,7 +45,7 @@ client.addListener("message", async function(from, to, text, message){
            return;
        }
     }
-    if(text.startsWith("!tl") || text.startsWith("!!timeplayed") || text.startsWith("#!tl") || text.startsWith("#!!timeplayed")) {
+    if(text.startsWith("!tl") || text.startsWith("!!timeplayed") || text.startsWith("#!tl") || text.startsWith("#!!timeplayed") || text.startsWith("#!tp") || text.startsWith("!tp")) {
         if (text.startsWith("#")) {
             correctname = await getMcoAPI("getcorrectname", args[1]);
             hourslogged1 = await getMcoAPI("gettimeonline", correctname);
