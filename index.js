@@ -5,7 +5,6 @@ const err_cache = new NodeCache();
 const request = require("request");
 const cheerio = require("cheerio");
 const util = require("util");
-const { testElement } = require("domutils");
 const client = new irc.Client('irc.esper.net', "NarwhalBot-recode", {
     channels: ["#narwhalbot"]
 });
@@ -46,14 +45,21 @@ client.addListener("message", async function(from, to, text, message){
            return;
        }
     }
-    if(text.startsWith("!tl") || text.startsWith("!!timeplayed")){
+    if(text.startsWith("!tl") || text.startsWith("!!timeplayed") || text.startsWith("#!tl") || text.startsWith("#!!timeplayed")) {
+        if (text.startsWith("#")) {
+            correctname = await getMcoAPI("getcorrectname", args[1]);
+            hourslogged1 = await getMcoAPI("gettimeonline", correctname);
+            hourslogged = Math.floor(hourslogged1 / 3600);
+            client.say(to, "# " + args[1] + " has logged " + hourslogged + " hours on minecraftonline.com");
+            return;
+        }
         correctname = await getMcoAPI("getcorrectname", args[1]);
         hourslogged1 = await getMcoAPI("gettimeonline", correctname);
         hourslogged = Math.floor(hourslogged1 / 3600);
         client.say(to, args[1] + " has logged " + hourslogged + " hours on minecraftonline.com");
         return;
     }
-    if(text.startsWith("!ls") || text.startsWith("!!lastseen")){
+    if(text.startsWith("!ls") || text.startsWith("!!lastseen") || text.startsWith("#!ls") || text.startsWith("#!!lastseen")){
         correctname = await getMcoAPI("getcorrectname", args[1]);
         var time = await getMcoAPI("getlastseen_unix", correctname);
         console.log(time.toString());
@@ -73,12 +79,18 @@ client.addListener("message", async function(from, to, text, message){
    
         var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24); 
 
+
         ago = time1.toGMTString()
+        if (text.startsWith("#")) {
+            var stringToSay = "# " + correctname+"last logged into minecraftonline.com on " + time1.toGMTString() + ` (${Math.floor(Difference_In_Days)} days ago)`
+            client.say(to, stringToSay.replace(/\n/g, ' '));
+            return;
+        }
         var stringToSay = correctname+"last logged into minecraftonline.com on " + time1.toGMTString() + ` (${Math.floor(Difference_In_Days)} days ago)`
         client.say(to, stringToSay.replace(/\n/g, ' '));
         return;
     }
-    if(text.startsWith("!fs") || text.startsWith("!!firstseen")){
+    if(text.startsWith("!fs") || text.startsWith("!!firstseen") || text.startsWith("#!!firstseen") || text.startsWith("#!fs")) {
         correctname = await getMcoAPI("getcorrectname", args[1]);
         fsc = firstseen_cache.get(correctname)
         // console.log("CN: "+correctname);
@@ -108,6 +120,14 @@ client.addListener("message", async function(from, to, text, message){
         ago = time1.toGMTString()
 
         //correctname = await getMcoAPI("getcorrectname", args);
+        if (text.startsWith("#")) {
+            var stringToSay = "# "+correctname+"first logged into minecraftonline.com on " + time1.toGMTString() + ` (${Math.floor(Difference_In_Days)} days ago)`
+            client.say(to, stringToSay.replace(/\n/g, ' '));
+    
+            firstseen_cache.set(correctname, epochnum);
+            client.say(to, "# Caching firstseen result for "+correctname);
+            return;
+        }
         var stringToSay = correctname+"first logged into minecraftonline.com on " + time1.toGMTString() + ` (${Math.floor(Difference_In_Days)} days ago)`
         client.say(to, stringToSay.replace(/\n/g, ' '));
 
@@ -125,6 +145,11 @@ client.addListener("message", async function(from, to, text, message){
         ago = time1.toGMTString()
 
         //correctname = await getMcoAPI("getcorrectname", args);
+        if (text.startsWith("#")) {
+            var stringToSay = "# " + correctname+"first logged into minecraftonline.com on " + time1.toGMTString() + ` (${Math.floor(Difference_In_Days)} days ago) (result from cache)`
+            client.say(to, stringToSay.replace(/\n/g, ' '));
+            return;
+        }
         var stringToSay = correctname+"first logged into minecraftonline.com on " + time1.toGMTString() + ` (${Math.floor(Difference_In_Days)} days ago) (result from cache)`
         client.say(to, stringToSay.replace(/\n/g, ' '));
     }
@@ -132,6 +157,10 @@ client.addListener("message", async function(from, to, text, message){
     }
     if(text.toLowerCase().includes("ohai")){
         ohai++;
+    }
+    if(text == "!bancount" || text == "!bc"){
+        var bancount = await getMcoAPI("getbancount.sh");
+        client.say(to, "MinecraftOnline.com has "+bancount+" bans!");
     }
     if(text == "!ohai"){
         client.say(to, "Ohai has been said "+ohai+" times")
