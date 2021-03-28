@@ -6,12 +6,13 @@ const request = require("request");
 const cheerio = require("cheerio");
 const util = require("util");
 const tokens = require("./tokens.json");
-const version = "2.0"
+const fs = require("fs");
+const version = "2.0.1"
 const client = new irc.Client('irc.esper.net', "NarwhalBot", {
     channels: ["#narwhalbot", "#minecraftonline"],
     userName: "narwhalbot",
     showErrors: true,
-    realName: `NarwhalBot - https://github.com/MrSlimeDiamond/NarwhalBot-Recode | V ${version}`
+    realName: `NarwhalBot by SlimeDiamond | V ${version}`
 });
 const Discord = require("discord.js");
 const discordClient = new Discord.Client();
@@ -56,7 +57,10 @@ client.addListener("message", async function (from, to, text, message) {
             }
         }
         if (text == "+version") {
-            client.say(to, version);
+            fs.readFile("./.git/refs/heads/master", "utf8", function read(error, data){
+                let git_ver = data.replace(/\n/g, "");
+                client.say(to, `NB version ${version} (git: ${git_ver})`);
+            });
         }
         if (text.startsWith("!bansuntil")) {
             var bansraw = await getMcoAPI("getbancount.sh");
