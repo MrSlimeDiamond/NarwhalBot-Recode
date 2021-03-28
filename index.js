@@ -5,9 +5,12 @@ const err_cache = new NodeCache();
 const request = require("request");
 const cheerio = require("cheerio");
 const util = require("util");
+const tokens = require("./tokens.json");
 const client = new irc.Client('irc.esper.net', "NarwhalBot-recode", {
     channels: ["#narwhalbot"]
 });
+const Discord = require("discord.js");
+const discordClient = new Discord.Client();
 var ohai = 0;
 
 async function getMcoAPI(script, argument) { // Made by IconPippi
@@ -199,3 +202,36 @@ client.addListener("message", async function(from, to, text, message){
     return;
 }
 });
+
+discordClient.on("message", function(message){
+    if(message.channel.id == "619518988237537310" && message.attachments.size > 0 && votes == true){  
+
+        message.react("🔼");
+        message.react("🔽");
+        message.react("❤️");
+            return;
+        }
+        const args = message.content.split(' ').slice(1);
+    
+        if(message.content == "+react"){
+            if(message.member.roles.cache.get("288051490772221954") || message.member.roles.cache.get("288053389835894788") || message.author.id == "323292144309633024"){
+            if(votes == false){
+                votes = true
+                message.channel.send("Turned #mco-memes voting system on!");
+                return;
+            }
+            if(votes == true){
+                votes = false
+                message.channel.send("Turned #mco-memes voting system off!");
+                return;
+    
+            }
+        }else{
+            message.channel.send("You can't do that!");
+            return;
+        }
+        }
+    
+});
+
+discordClient.login(tokens.discordToken);
