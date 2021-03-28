@@ -6,7 +6,7 @@ const request = require("request");
 const cheerio = require("cheerio");
 const util = require("util");
 const tokens = require("./tokens.json");
-const client = new irc.Client('irc.esper.net', "NarwhalBot-recode", {
+const client = new irc.Client('irc.esper.net', "NarwhalBot", {
     channels: ["#narwhalbot"]
 });
 const Discord = require("discord.js");
