@@ -10,7 +10,7 @@ const fs = require("fs");
 const version = "2.0.1"
 const client = new irc.Client('irc.esper.net', "NarwhalBot", {
     channels: ["#narwhalbot", "#minecraftonline"],
-    userName: "narwhalbot",
+    userName: "narwhal",
     showErrors: true,
     realName: `NarwhalBot by SlimeDiamond | V ${version}`
 });
