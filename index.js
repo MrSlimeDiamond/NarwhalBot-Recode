@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 const util = require("util");
 const tokens = require("./tokens.json");
 const client = new irc.Client('irc.esper.net', "NarwhalBot", {
-    channels: ["#narwhalbot"]
+    channels: ["#narwhalbot", "#minecraftonline"]
 });
 const Discord = require("discord.js");
 const discordClient = new Discord.Client();
@@ -19,7 +19,6 @@ async function getMcoAPI(script, argument) { // Made by IconPippi
     output = await new Promise((resolve, reject) => {
         request("https://minecraftonline.com/cgi-bin/" + script + "?" + argument, (error, response, html) => {
             let $ = cheerio.load(html.toString());
-
             if (!error)
                 resolve($.text());
             else
@@ -56,13 +55,13 @@ client.addListener("message", async function (from, to, text, message) {
         if (text.startsWith("!bansuntil")) {
             var bansraw = await getMcoAPI("getbancount.sh");
             var bans = parseInt(bansraw) - 1;
-            var arg = parseInt(args);
+            var arg = parseInt(args[1]);
             if (arg < bans) {
                 client.say(to, "Already surpassed that number.");
                 return;
             } else {
                 var num = arg - bans;
-                client.say(to, "There are " + num + " bans until " + args + " bans (currently " + bans + " bans)");
+                client.say(to, "There are " + num + " bans until " + args[1] + " bans (currently " + bans + " bans)");
             }
         }
 
@@ -181,7 +180,8 @@ client.addListener("message", async function (from, to, text, message) {
         }
         if (text == "!bancount" || text == "!bc") {
             var bancount = await getMcoAPI("getbancount.sh");
-            client.say(to, "MinecraftOnline.com has " + bancount + " bans!");
+            str="MinecraftOnline.com has " + bancount + " bans!"
+            client.say(to, str.replace(/\n/g, ""));
         }
         if (text == "!ohai") {
             client.say(to, "Ohai has been said " + ohai + " times")
@@ -203,7 +203,7 @@ client.addListener("message", async function (from, to, text, message) {
                     return;
                 }
             } catch (err) {
-                client.say(to, "Input: " + a);
+                client.say(to, "# Input: " + a);
                 client.say("Output(Error): " + evaled);
                 return;
             }
