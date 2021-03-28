@@ -11,6 +11,7 @@ const client = new irc.Client('irc.esper.net', "NarwhalBot", {
 });
 const Discord = require("discord.js");
 const discordClient = new Discord.Client();
+var votes = true;
 var ohai = 0;
 
 async function getMcoAPI(script, argument) { // Made by IconPippi
@@ -29,6 +30,9 @@ async function getMcoAPI(script, argument) { // Made by IconPippi
     return output;
 }
 
+client.addListener('registered', function () {
+    client.say('NickServ', 'identify ' + tokens.nickserv_pass);
+});
 
 client.addListener("message", async function (from, to, text, message) {
 
@@ -54,11 +58,11 @@ client.addListener("message", async function (from, to, text, message) {
             var bans = parseInt(bansraw) - 1;
             var arg = parseInt(args);
             if (arg < bans) {
-                bot.say(to, "Already surpassed that number.");
+                client.say(to, "Already surpassed that number.");
                 return;
             } else {
                 var num = arg - bans;
-                bot.say(to, "There are " + num + " bans until " + args + " bans (currently " + bans + " bans)");
+                client.say(to, "There are " + num + " bans until " + args + " bans (currently " + bans + " bans)");
             }
         }
 
