@@ -6,8 +6,12 @@ const request = require("request");
 const cheerio = require("cheerio");
 const util = require("util");
 const tokens = require("./tokens.json");
+const version = "2.0"
 const client = new irc.Client('irc.esper.net', "NarwhalBot", {
-    channels: ["#narwhalbot", "#minecraftonline"]
+    channels: ["#narwhalbot", "#minecraftonline"],
+    userName: "narwhalbot",
+    showErrors: true,
+    realName: `NarwhalBot - https://github.com/MrSlimeDiamond/NarwhalBot-Recode | V ${version}`
 });
 const Discord = require("discord.js");
 const discordClient = new Discord.Client();
@@ -51,7 +55,9 @@ client.addListener("message", async function (from, to, text, message) {
                 return;
             }
         }
-
+        if (text == "+version") {
+            client.say(to, version);
+        }
         if (text.startsWith("!bansuntil")) {
             var bansraw = await getMcoAPI("getbancount.sh");
             var bans = parseInt(bansraw) - 1;
