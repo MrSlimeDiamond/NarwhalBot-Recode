@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 const util = require("util");
 const tokens = require("./tokens.json");
 const fs = require("fs");
-const version = "2.0.1"
+const version = "2.1"
 const client = new irc.Client('irc.esper.net', "NarwhalBot", {
     channels: ["#narwhalbot", "#minecraftonline"],
     userName: "narwhal",
