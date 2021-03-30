@@ -17,7 +17,10 @@ const client = new irc.Client('irc.esper.net', "NarwhalBot", {
 const Discord = require("discord.js");
 const discordClient = new Discord.Client();
 var votes = true;
-var ohai = 0;
+var ohai = parseInt(fs.readFileSync("ohai.txt", "utf8"));
+if(ohai == NaN || ohai == undefined) {
+    ohai = 0;
+}
 
 async function getMcoAPI(script, argument) { // Made by IconPippi
     let output;
@@ -262,4 +265,30 @@ discordClient.on("message", function (message) {
 
 });
 
+process.once("SIGINT", function(SIGINT) {
+    console.log("SIGINT");
+    client.disconnect("recieved sigint");
+    discordClient.destroy();
+    let data = ohai.toString();
+    fs.writeFile("ohai.txt", data, (err) => {
+        if (err)
+          console.log(err);
+        else {
+          console.log(fs.readFileSync("ohai.txt", "utf8"));
+        }
+    });
+});
+process.once("SIGTERM", function(SIGINT) {
+    console.log("SIGTERM!!!");
+    client.disconnect("caught sigterm, bot terminating...");
+    discordClient.destroy();
+    let data = ohai.toString();
+    fs.writeFile("ohai.txt", data, (err) => {
+        if (err)
+          console.log(err);
+        else {
+          console.log(fs.readFileSync("ohai.txt", "utf8"));
+        }
+    });
+});
 discordClient.login(tokens.discordToken);
