@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 const util = require("util");
 const tokens = require("./tokens.json");
 const fs = require("fs");
-const version = "2.1"
+const version = "2.1.1"
 const client = new irc.Client('irc.esper.net', "NarwhalBot", {
     channels: ["#narwhalbot", "#minecraftonline"],
     userName: "narwhal",
@@ -189,7 +189,7 @@ client.addListener("message", async function (from, to, text, message) {
             return;
         }
         if (text.toLowerCase().includes("ohai")) {
-            ohai++;
+            if (!from == "NarwhalBot") ohai++;
         }
         if (text == "!bancount" || text == "!bc") {
             var bancount = await getMcoAPI("getbancount.sh");
