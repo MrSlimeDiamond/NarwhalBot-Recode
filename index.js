@@ -45,6 +45,14 @@ client.addListener("message", async function (from, to, text, message) {
 
     const args = text.split(" ");
     try {
+        if (text.startsWith("!randomplayer")) {
+            let raw = await getMcoAPI("getplayerlist.sh");
+            let list_commaless = raw.replace(/,/g, "");
+            let list = list_commaless.split(" ");
+            let random = Math.floor(Math.random() * list.length);
+            let player = list[random];
+            client.say(to, `A random player on minecraftonline.com is ${player}`);
+        }
         if (text.startsWith("+ping")) {
             client.say(to, from + ": Pong!");
         }
