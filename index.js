@@ -1,3 +1,6 @@
+var ingameBot = true;
+
+const mineflayer = require("mineflayer");
 const irc = require("irc");
 const NodeCache = require("node-cache");
 const firstseen_cache = new NodeCache();
@@ -7,7 +10,7 @@ const cheerio = require("cheerio");
 const util = require("util");
 const tokens = require("./tokens.json");
 const fs = require("fs");
-const version = "2.1.1"
+const version = "2.1.2"
 const client = new irc.Client('irc.esper.net', "NarwhalBot", {
     channels: ["#narwhalbot", "#minecraftonline"],
     userName: "narwhal",
@@ -197,7 +200,8 @@ client.addListener("message", async function (from, to, text, message) {
             return;
         }
         if (text.toLowerCase().includes("ohai")) {
-            if (!from == "NarwhalBot") ohai++;
+            if (from == "NarwhalBot") return;
+            ohai++;
         }
         if (text == "!bancount" || text == "!bc") {
             var bancount = await getMcoAPI("getbancount.sh");
@@ -273,6 +277,24 @@ discordClient.on("message", function (message) {
 
 });
 
+if (ingameBot == true) {
+    
+const igb = mineflayer.createBot({
+    host: tokens.serverip,
+    username: tokens.mcname,
+    password: tokens.mcpass,
+    // port: 25565,                // only set if you need a port that isn't 25565
+    // version: false,             // only set if you need a specific version or snapshot (ie: "1.8.9" or "1.16.5"), otherwise it's set automatically
+    // auth: 'mojang'              // only set if you need microsoft auth, then set this to 'microsoft'
+  });
+  igb.on("message", function(username, message) {
+    console.log(message);
+    if (username == igb.username) return;
+    if (message.content = "!nbping") {
+        igb.chat("Pong!");
+    }
+  });
+}
 process.once("SIGINT", function(SIGINT) {
     console.log("SIGINT");
     client.disconnect("recieved sigint");
