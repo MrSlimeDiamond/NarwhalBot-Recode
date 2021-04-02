@@ -1,4 +1,4 @@
-var ingameBot = true;
+var ingameBot = false;
 
 const mineflayer = require("mineflayer");
 const irc = require("irc");
@@ -10,7 +10,7 @@ const cheerio = require("cheerio");
 const util = require("util");
 const tokens = require("./tokens.json");
 const fs = require("fs");
-const version = "2.1.2"
+const version = "2.1.3"
 const client = new irc.Client('irc.esper.net', "NarwhalBot", {
     channels: ["#narwhalbot", "#minecraftonline"],
     userName: "narwhal",
