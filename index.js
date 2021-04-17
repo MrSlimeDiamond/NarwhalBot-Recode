@@ -90,7 +90,8 @@ client.addListener("message", async function (from, to, text, message) {
         }
 
         if (text.startsWith("!tl") || text.startsWith("!!timeplayed") || text.startsWith("#!tl") || text.startsWith("#!!timeplayed") || text.startsWith("#!tp") || text.startsWith("!tp")) {
-            if (text.startsWith("#")) {
+                if (text.startsWith("!tps")) return;
+                if (text.startsWith("#")) {
                 correctname = await getMcoAPI("getcorrectname", args[1]);
                 hourslogged1 = await getMcoAPI("gettimeonline", correctname);
                 hourslogged = Math.floor(hourslogged1 / 3600);
@@ -203,6 +204,9 @@ client.addListener("message", async function (from, to, text, message) {
             if (from == "NarwhalBot") return;
             ohai++;
         }
+        if (text == "!king") {
+            client.say(to, "TheDemetri is the king of MCO!");
+        }
         if (text == "!bancount" || text == "!bc") {
             var bancount = await getMcoAPI("getbancount.sh");
             str="MinecraftOnline.com has " + bancount + " bans!"
@@ -278,7 +282,7 @@ discordClient.on("message", function (message) {
 });
 
 if (ingameBot == true) {
-    
+
 const igb = mineflayer.createBot({
     host: tokens.serverip,
     username: tokens.mcname,
